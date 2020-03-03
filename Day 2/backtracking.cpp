@@ -63,6 +63,7 @@ bool NQueens(int board[4][4], int row, int n) {
 			}
 			cout << endl;
 		}
+		cout << "*****************" << endl;
 
 		return true;
 	}
@@ -75,9 +76,9 @@ bool NQueens(int board[4][4], int row, int n) {
 
 			bool restOfTheQueen = NQueens(board, row + 1, n);
 
-			if (restOfTheQueen) {
-				return true;
-			}
+			// if (restOfTheQueen) {
+			// 	return true;
+			// }
 
 			board[row][col] = 0;  // BACKTRACKING
 		}
@@ -86,12 +87,27 @@ bool NQueens(int board[4][4], int row, int n) {
 	return false;
 }
 
+bool ratInAMaze(char maze[4][4], int sr, int sc, int er, int ec) {
+
+}
+
 int main() {
 
-	int board[4][4] = {0};
-	int n = 4;
+	// int board[4][4] = {0};
+	// int n = 4;
 
-	cout << NQueens(board, 0, n) << endl;
+	// cout << NQueens(board, 0, n) << endl;
+
+	char maze[][4] = {
+		{'0', '0', '0', '0'},
+		{'0', '0', '0', 'X'},
+		{'0', '0', '0', '0'},
+		{'0', 'X', '0', '0'},
+	};
 
 	return 0;
 }
+
+// HOMEWORK
+// COUNT N Queens
+
