@@ -67,8 +67,50 @@ int LongestSubarrySumZero(int arr[], int n) {
 
 bool subarraySumWithK(int arr[], int n, int k) {
 
+	unordered_map<int, bool> h;
 
+	h[0] = true;
 
+	int sum = 0;
+
+	for (int i = 0; i < n; i++) {
+
+		sum += arr[i];
+
+		if (h.count(sum - k)) {
+			return true;
+		}
+
+		h[sum] = true;
+	}
+
+	return false;
+}
+
+int longestConsecutive(vector<int>& nums) {
+
+	unordered_map<int, int> h;
+
+	int maxLen = 0;
+
+	for (int num : nums) {
+		if (h.count(num) == 0) {
+
+			int left = h.count(num - 1) == 1 ? h[num - 1] : 0;
+			int right = h.count(num + 1) == 1 ? h[num + 1] : 0;
+
+			int total = left + 1 + right;
+
+			maxLen = max(total, maxLen);
+
+			h[num] = total;
+
+			h[num - left] = total;
+			h[num + right] = total;
+		}
+	}
+
+	return maxLen;
 }
 
 int main() {
@@ -83,10 +125,5 @@ int main() {
 
 	// cout << LongestSubarrySumZero(arr, n) << endl;
 
-	int arr[] = {1, 2, 3, 4, 5, 6, 7};
-	int n = 7;
-	int k =
-	    cout <<
-
-	    return 0;
+	return 0;
 }

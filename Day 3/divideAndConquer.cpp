@@ -241,6 +241,39 @@ int aggressiveCows(int arr[], int n, int cows) {
 	return ans;
 }
 
+void quickSort(int arr[], int start, int end) {
+	if (start >= end) {
+		return;
+	}
+
+	int mid = start + (end - start) / 2;
+
+	int pivot = arr[mid];
+
+	int left = start;
+	int right = end;
+
+	while (left <= right) {
+
+		while (arr[left] < pivot) {
+			left++;
+		}
+
+		while (arr[right] > pivot) {
+			right--;
+		}
+
+		if (left <= right) {
+			swap(arr[left], arr[right]);
+			left++;
+			right--;
+		}
+	}
+
+	quickSort(arr, start, right);
+	quickSort(arr, left, end);
+}
+
 int main() {
 
 	// int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -255,15 +288,15 @@ int main() {
 
 	// cout << lowerBound(arr, n, data) << endl;
 
-	// int arr[] = {7, 6, 5, 4, 3, 2, 1};
-	// int n = 7;
+	int arr[] = {7, 6, 5, 4, 3, 2, 1};
+	int n = 7;
 
-	// mergeSort(arr, 0, n - 1);
+	quickSort(arr, 0, n - 1);
 
-	// for (int i = 0; i < n; i++) {
-	// 	cout << arr[i] << " ";
-	// }
-	// cout << endl;
+	for (int i = 0; i < n; i++) {
+		cout << arr[i] << " ";
+	}
+	cout << endl;
 
 	// int boards[] = {10, 20, 30, 40};
 	// int n = 4;
@@ -271,11 +304,11 @@ int main() {
 
 	// cout << painterProblem(boards, n, k) << endl;
 
-	int arr[] = {1 , 2 , 8 , 4 , 9};
-	int n = 5;
-	int cows = 3;
+	// int arr[] = {1 , 2 , 8 , 4 , 9};
+	// int n = 5;
+	// int cows = 3;
 
-	cout << aggressiveCows(arr, n, cows) << endl;
+	// cout << aggressiveCows(arr, n, cows) << endl;
 
 	return 0;
 }
