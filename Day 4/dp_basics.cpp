@@ -336,6 +336,269 @@ int robDP(vector<int>& nums) {
 	return dp[0];
 }
 
+// int helper(vector<vector<int>> &grid, int sr, int sc, int er, int ec, vector<vector<int> > &dp) {
+// 	if (sr == er and sc == ec) {
+// 		return grid[er][ec];
+// 	}
+
+// 	if (sr > er or sc > ec) {
+// 		return INT_MAX;
+// 	}
+
+// 	//MEMO
+// 	if (dp[sr][sc] != -1) {
+// 		return dp[sr][sc];
+// 	}
+
+// 	int val = grid[sr][sc];
+
+// 	int right = helper(grid, sr, sc + 1, er, ec, dp);
+// 	int down = helper(grid, sr + 1, sc, er, ec, dp);
+
+// 	int result = min(right, down) + val;
+
+// 	dp[sr][sc] = result;
+
+// 	return result;
+// }
+
+// int minPathSum(vector<vector<int>>& grid) {
+
+// 	int n = grid.size();
+// 	int m = grid[0].size();
+
+// 	int er = n - 1;
+// 	int ec = m - 1;
+
+// 	int row = n;
+// 	int col = m;
+
+// 	vector<vector<int> > dp(row, vector<int> (col, -1));
+
+// 	return helper(grid, 0, 0, er, ec, dp);
+// }
+
+int helper(string s1, int i, string s2, int j, vector<vector<int> > &dp) {
+	if (i == s1.length() or j == s2.length()) {
+		dp[i][j] = 0;
+		return 0;
+	}
+
+	if (dp[i][j] != -1) {
+		return dp[i][j];
+	}
+
+	int result;
+
+	if (s1[i] == s2[j]) {
+
+		result = 1 + helper(s1, i + 1, s2, j + 1, dp);
+
+	} else {
+
+		int first = helper(s1, i + 1, s2, j, dp);
+		int second = helper(s1, i, s2, j + 1, dp);
+
+		result = max(first, second);
+	}
+
+	dp[i][j] = result;
+
+	for (int x = 0; x <= s1.length(); x++) {
+		for (int y = 0; y <= s2.length(); y++) {
+			cout << dp[x][y] << "\t";
+		}
+		cout << endl;
+	}
+
+	cout << "*****************************************" << endl;
+
+	return result;
+}
+
+int longestCommonSubsequence(string text1, string text2) {
+
+	int row = text1.length() + 1;
+	int col = text2.length() + 1;
+
+	vector<vector<int> > dp(row, vector<int> (col, -1));
+
+	return helper(text1, 0, text2, 0, dp);
+}
+
+int longestCommonSubsequenceDP(string text1, string text2) {
+
+	int row = text1.length() + 1;
+	int col = text2.length() + 1;
+
+	vector<vector<int> > dp(row, vector<int> (col, 0));
+
+	for (int i = text1.length() - 1; i >= 0; i--) {
+		for (int j = text2.length() - 1; j >= 0; j--) {
+
+			if (text1[i] == text2[j]) {
+				dp[i][j] = 1 + dp[i + 1][j + 1];
+			} else {
+				dp[i][j] = max(dp[i + 1][j], dp[i][j + 1]);
+			}
+		}
+	}
+
+	return dp[0][0];
+}
+
+int knapSack(int si, int weight[], int value[], int capacity, int n) {
+	if (si == n) {
+		return 0;
+	}
+
+	int include = INT_MIN;
+
+	if (weight[si] <= capacity) {
+		include = value[si] + knapSack(si + 1, weight, value, capacity - weight[si], n);
+	}
+
+	int skip = knapSack(si + 1, weight, value, capacity, n);
+
+	int result = max(include, skip);
+
+	return result;
+}
+
+// int dp[5][9];
+
+// int knapSackMemo(int si, int weight[], int value[], int capacity, int n) {
+// 	if (si == n) {
+// 		return 0;
+// 	}
+
+// 	if (dp[si][capacity] != -1) {
+// 		return dp[si][capacity];
+// 	}
+
+// 	int include = INT_MIN;
+
+// 	if (weight[si] <= capacity) {
+// 		include = value[si] + knapSackMemo(si + 1, weight, value, capacity - weight[si], n);
+// 	}
+
+// 	int skip = knapSackMemo(si + 1, weight, value, capacity, n);
+
+// 	int result = max(include, skip);
+
+// 	dp[si][capacity] = result;
+
+// 	for (int i = 0; i < 5; i++) {
+// 		for (int j = 0; j < 9; j++) {
+// 			cout << dp[i][j] << "\t";
+// 		}
+// 		cout << endl;
+// 	}
+// 	cout << "*****************************************" << endl;
+
+// 	return result;
+// }
+
+int knapSackDP[5][9];
+
+int knapSackMemo(int value[], int weight[], int si, int capacity, int n) {
+	if (si == 0) {
+		knapSackDP[si][capacity] = 0;
+		return 0;
+	}
+
+	if (knapSackDP[si][capacity] != -1) {
+		return knapSackDP[si][capacity];
+	}
+
+	int include = INT_MIN;
+	int exclude = INT_MIN;
+
+	if (weight[si - 1] <= capacity) {
+		include = value[si - 1] + knapSackMemo(value, weight, si - 1, capacity - weight[si - 1], n);
+	}
+
+	exclude = knapSackMemo(value, weight, si - 1, capacity, n);
+
+	int result = max(include, exclude);
+
+	knapSackDP[si][capacity] = result;
+
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 9; j++) {
+			cout << knapSackDP[i][j] << "\t";
+		}
+		cout << endl;
+	}
+	cout << "***************************************************" << endl;
+
+	return result;
+}
+
+int knapSackPUREDP(int value[], int weight[], int capacity, int n) {
+
+	int row = n + 1;
+	int col = capacity + 1;
+
+	vector<vector<int> > dp(row, vector<int> (col, 0));
+
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= capacity; j++) {
+
+			int include = INT_MIN;
+			int exclude = INT_MIN;
+
+			if (weight[i - 1] <= j) {
+				include = value[i - 1] + dp[i - 1][j - weight[i - 1]];
+			}
+
+			exclude = dp[i - 1][j];
+
+			dp[i][j] = max(include, exclude);
+		}
+	}
+
+	return dp[n][capacity];
+}
+
+bool isPossible(int si, vector<int> &nums, int sum, int total, vector<vector<int> > &dp) {
+	if (sum == total) return true;
+
+	if (sum > total or si == nums.size()) {
+		return false;
+	}
+
+	if (dp[si][sum] != -1) {
+		return dp[si][sum];
+	}
+
+	bool include = isPossible(si + 1, nums, sum + nums[si], total, dp);
+	bool exclude = isPossible(si + 1, nums, sum, total, dp);
+
+	dp[si][sum] = include or exclude;
+
+	return dp[si][sum];
+}
+
+bool canPartition(vector<int>& nums) {
+	int total = 0;
+
+	for (int i = 0; i < nums.size(); i++) {
+		total += nums[i];
+	}
+
+	if (total % 2 == 1) return false;
+
+	total = total / 2;
+
+	int row = nums.size() + 1;
+	int col = total + 1;
+
+	vector<vector<int> > dp(row, vector<int> (col, -1));
+
+	return isPossible(0, nums, 0, total, dp);
+}
+
 int main() {
 
 	// int n = 5;
@@ -367,14 +630,29 @@ int main() {
 	// cout << numSquaresMemo(12) << endl;
 	// cout << numSquaresDP(12) << endl;
 
-	vector<int> v{2, 7, 9, 3, 1};
-	cout << rob(v) << endl;
+	// vector<int> v{2, 7, 9, 3, 1};
+	// cout << rob(v) << endl;
 
-	for (int val : v) {
-		cout << val << " ";
-	}
-	cout << endl;
+	// for (int val : v) {
+	// 	cout << val << " ";
+	// }
+	// cout << endl;
 
+	// cout << longestCommonSubsequence("abcde", "agcte") << endl;
+
+	int weight[] = {5, 4, 6, 3};
+	int value[] = {50, 40, 60, 40};
+	int capacity = 8;
+	int n = 4;
+
+	// memset(dp, -1, sizeof(dp));
+	memset(knapSackDP, -1, sizeof(knapSackDP));
+
+
+	// cout << knapSackMemo(0, weight, value, capacity, n) << endl;
+	// cout << knapSackMemo(value, weight, n, capacity, n) << endl;
+
+	cout << knapSackPUREDP(value, weight, capacity, n) << endl;
 	return 0;
 }
 
