@@ -599,6 +599,361 @@ bool canPartition(vector<int>& nums) {
 	return isPossible(0, nums, 0, total, dp);
 }
 
+int lps(string &str, int start, int end, vector<vector<int> > &dp) {
+	if (start == end) {
+		return 1;
+	}
+
+	if (start > end) return 0;
+
+	if (dp[start][end] != -1) {
+		return dp[start][end];
+	}
+
+	int result;
+
+	if (str[start] == str[end]) {
+		result = lps(str, start + 1, end - 1, dp) + 2;
+	} else {
+		int first = lps(str, start + 1, end, dp);
+		int second = lps(str, start, end - 1, dp);
+
+		result = max(first, second);
+	}
+
+	dp[start][end] = result;
+
+	return result;
+}
+
+int longestPalindromeSubseqMemo(string s) {
+	if (s.length() == 0) return 0;
+
+	if (s.length() == 1) return 1;
+
+	vector<vector<int> > dp(s.length(), vector<int> (s.length(), -1));
+
+	return lps(s, 0, s.length() - 1, dp);
+}
+
+int longestPalindromeSubseqDP(string s) {
+	if (s.length() == 0) return 0;
+
+	if (s.length() == 1) return 1;
+
+	vector<vector<int> > dp(s.length(), vector<int> (s.length(), 0));
+
+	int n = dp.size();
+
+	for (int i = 0; i < n; i++) {
+		dp[i][i] = 1;
+	}
+
+	for (int col = 1; col < n; col++) {
+		for (int row = col - 1; row >= 0 ; row--) {
+
+			if (s[row] == s[col]) {
+				dp[row][col] = dp[row + 1][col - 1] + 2;
+			} else {
+				dp[row][col] = max(dp[row + 1][col], dp[row][col - 1]);
+			}
+
+		}
+	}
+
+	return dp[0][n - 1];
+}
+
+int lengthOfLIS(vector<int>& nums) {
+	if (nums.size() == 0) return 0;
+
+	vector<int> dp(nums.size(), 1);
+
+	int maxLen = 1;
+
+	for (int i = 1; i < nums.size(); i++) {
+
+		for (int j = 0; j < i; j++) {
+			if (nums[j] < nums[i]) {
+				dp[i] = max(dp[i], dp[j] + 1);
+			}
+		}
+		maxLen = max(dp[i], maxLen);
+	}
+
+	return maxLen;
+}
+
+int distinctSubseq(string s, int si, string t, int ti, vector<vector<int> > &dp) {
+	if (ti == t.length()) {
+		return 1;
+	}
+
+	if (si == s.length()) {
+		return 0;
+	}
+
+	if (dp[si][ti] != -1) {
+		return dp[si][ti];
+	}
+
+	int count = 0;
+
+	if (s[si] == t[ti]) {
+		count += distinctSubseq(s, si + 1, t, ti + 1, dp);
+	}
+
+	count += distinctSubseq(s, si + 1, t, ti, dp);
+
+	dp[si][ti] = count;
+
+	return count;
+}
+
+int numDistinctMemo(string s, string t) {
+
+	int row = s.length() + 1;
+	int col = t.length() + 1;
+
+	vector<vector<int> > dp(row, vector<int> (col, -1));
+
+	return distinctSubseq(s, 0, t, 0, dp);
+}
+
+int numDistinctDP(string s, string t) {
+
+	int row = s.length() + 1;
+	int col = t.length() + 1;
+
+	vector<vector<long> > dp(row, vector<long> (col, 0));
+
+	for (int i = 0; i < row; i++) {
+		dp[i][t.length()] = 1;
+		// dp[i][col-1] = 1;
+	}
+
+	for (int i = s.length() - 1; i >= 0; i--) {
+		for (int j = t.length() - 1; j >= 0; j--) {
+
+			if (s[i] == t[j]) {
+				dp[i][j] += dp[i + 1][j + 1];
+			}
+
+			dp[i][j] += dp[i + 1][j];
+		}
+	}
+
+	return dp[0][0];
+}
+
+int coinChange2(int si, vector<int> &coins, int amount, vector<vector<int> > &dp) {
+	if (amount == 0) {
+		return 1;
+	}
+
+	if (si == coins.size()) {
+		return 0;
+	}
+
+	if (dp[si][amount] != -1) {
+		return dp[si][amount];
+	}
+
+	int count = 0;
+
+	if (coins[si] <= amount) {
+		count += coinChange2(si, coins, amount - coins[si], dp);
+	}
+
+	count += coinChange2(si + 1, coins, amount, dp);
+
+	dp[si][amount] = count;
+
+	return count;
+}
+
+int changeMemo(int amount, vector<int>& coins) {
+
+	int row = coins.size() + 1;
+	int col = amount + 1;
+
+	vector<vector<int> > dp(row, vector<int> (col, -1));
+
+	return coinChange2(0, coins, amount, dp);
+}
+
+int changeDP(int amount, vector<int>& coins) {
+
+	int row = coins.size() + 1;
+	int col = amount + 1;
+
+	vector<vector<int> > dp(row, vector<int> (col, 0));
+
+	for (int i = 0; i < row; i++) {
+		dp[i][0] = 1;
+	}
+
+	for (int row = coins.size() - 1; row >= 0; row--) {
+		for (int col = 1; col <= amount; col++) {
+
+			if (coins[row] <= col) {
+				dp[row][col] += dp[row][col - coins[row]];
+			}
+
+			dp[row][col] += dp[row + 1][col];
+		}
+	}
+
+	return dp[0][amount];
+}
+
+int MOD = 1e9 + 7;
+
+int diceRolls(int d, int f, int target, vector<vector<int> > &dp) {
+	if (d == 0 and target == 0) {
+		return 1;
+	}
+
+	if (d == 0 or target == 0) {
+		return 0;
+	}
+
+	if (dp[d][target] != -1) {
+		return dp[d][target];
+	}
+
+	int count = 0;
+
+	for (int i = 1; i <= f; i++) {
+		if (i <= target) {
+			count = (count + diceRolls(d - 1, f, target - i, dp)) % MOD;
+		} else {
+			break;
+		}
+	}
+
+	dp[d][target] = count;
+
+	return count;
+}
+
+int numRollsToTargetMemo(int d, int f, int target) {
+
+	vector<vector<int> > dp(d + 1, vector<int> (target + 1, -1));
+
+	return diceRolls(d, f, target, dp);
+}
+
+int numRollsToTargetDP(int d, int f, int target) {
+
+	vector<vector<int> > dp(d + 1, vector<int> (target + 1, 0));
+
+	dp[0][0] = 1;
+
+	for (int row = 1; row <= d; row++) {
+		for (int col = 1; col <= target; col++) {
+
+			int count = 0;
+
+			for (int i = 1; i <= f; i++) {
+
+				if (i <= col) {
+					count = (count + dp[row - 1][col - i]) % MOD;
+				} else {
+					break;
+				}
+			}
+
+			dp[row][col] = count;
+		}
+	}
+
+	return dp[d][target];
+}
+
+int countSubstrings(string s) {
+
+	int ans = 0;
+
+	for (int i = 0; i < s.length(); i++) {
+		// ODD LENGTH
+
+		for (int j = 0; i + j < s.length() and i - j >= 0; j++) {
+			if (s[i - j] == s[i + j]) {
+				ans++;
+			} else {
+				break;
+			}
+		}
+
+		// EVEN LENGTH
+
+		for (int j = 0; i + j + 1 < s.length() and i - j >= 0; j++) {
+			if (s[i - j] == s[i + j + 1]) {
+				ans++;
+			} else {
+				break;
+			}
+		}
+	}
+
+	return ans;
+}
+
+double largestSumOfAverages(vector<int>& A, int K) {
+	if (A.size() == 0) return 0;
+
+	int row = A.size() + 1;
+	int col = K + 1;
+
+	vector<vector<double> > dp(row, vector<double> (col, -1));
+
+	return helper(0, A, K, dp);
+}
+
+double calcAverage(int start, vector<int> &nums) {
+
+	double sum = 0;
+
+	for (int i = start; i < nums.size(); i++) {
+		sum += nums[i];
+	}
+
+	sum = sum / (nums.size() - start);
+	return sum;
+}
+
+double helper(int si, vector<int> &nums, int k, vector<vector<double> > &dp) {
+	if (si == nums.size()) {
+		return 0;
+	}
+
+	if (k == 1) {
+		return calcAverage(si, nums);
+	}
+
+	if (dp[si][k] != -1) return dp[si][k];
+
+	double maxValue = INT_MIN;
+
+	double sum = 0;
+
+	for (int i = si; i < nums.size(); i++) {
+
+		sum += nums[i];
+
+		double bakiKaResult = helper(i + 1, nums, k - 1, dp);
+
+		double avg = sum / (i - si + 1);
+
+		maxValue = max(bakiKaResult + avg, maxValue);
+	}
+
+	dp[si][k] = maxValue;
+
+	return maxValue;
+}
+
 int main() {
 
 	// int n = 5;
@@ -640,19 +995,21 @@ int main() {
 
 	// cout << longestCommonSubsequence("abcde", "agcte") << endl;
 
-	int weight[] = {5, 4, 6, 3};
-	int value[] = {50, 40, 60, 40};
-	int capacity = 8;
-	int n = 4;
+	// int weight[] = {5, 4, 6, 3};
+	// int value[] = {50, 40, 60, 40};
+	// int capacity = 8;
+	// int n = 4;
 
-	// memset(dp, -1, sizeof(dp));
-	memset(knapSackDP, -1, sizeof(knapSackDP));
+	// // memset(dp, -1, sizeof(dp));
+	// memset(knapSackDP, -1, sizeof(knapSackDP));
 
 
-	// cout << knapSackMemo(0, weight, value, capacity, n) << endl;
-	// cout << knapSackMemo(value, weight, n, capacity, n) << endl;
+	// // cout << knapSackMemo(0, weight, value, capacity, n) << endl;
+	// // cout << knapSackMemo(value, weight, n, capacity, n) << endl;
 
-	cout << knapSackPUREDP(value, weight, capacity, n) << endl;
+	// cout << knapSackPUREDP(value, weight, capacity, n) << endl;
+
+
 	return 0;
 }
 
