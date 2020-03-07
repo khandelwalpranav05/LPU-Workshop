@@ -115,8 +115,60 @@ int sumOfNodes(node* root) {
 	return total;
 }
 
-bool search(node* root, int item) {
+// bool search(node* root, int item) {
+// TODO
+// }
 
+int diameter(node* root) {
+	if (root == NULL) {
+		return 0;
+	}
+
+	int leftDiameter = diameter(root->left);
+	int rightDiameter = diameter(root->right);
+
+	int leftHeight = height(root->left);
+	int rightHeight = height(root->right);
+
+	int mereThrough = leftHeight + 2 + rightHeight;
+
+	int total = max(mereThrough, max(leftDiameter, rightDiameter));
+
+	return total;
+}
+
+class DiaHeight {
+public:
+	int height;
+	int diameter;
+};
+
+DiaHeight diameterOptimized(node* root) {
+	DiaHeight val;
+	if (root == NULL) {
+		val.diameter = 0;
+		val.height = -1;
+		return val;
+	}
+
+	DiaHeight leftPair = diameterOptimized(root->left);
+	DiaHeight rightPair = diameterOptimized(root->right);
+
+	int leftDiameter = leftPair.diameter;
+	int rightDiameter = rightPair.diameter;
+
+	int leftHeight = leftPair.height;
+	int rightHeight = rightPair.height;
+
+	int mereThrough = leftHeight + rightHeight + 2;
+
+	int diameterTotal = max(mereThrough, max(leftDiameter, rightDiameter));
+
+	val.diameter = diameterTotal;
+
+	val.height = max(leftHeight, rightHeight) + 1;
+
+	return val;
 }
 
 int main() {
@@ -138,6 +190,11 @@ int main() {
 	// cout << height(root) << endl;
 
 	// cout << sumOfNodes(root) << endl;
+
+	// cout << diameter(root) << endl;
+
+	DiaHeight val = diameterOptimized(root);
+	cout << val.diameter << endl;
 
 	return 0;
 }
