@@ -954,6 +954,68 @@ double helper(int si, vector<int> &nums, int k, vector<vector<double> > &dp) {
 	return maxValue;
 }
 
+bool isPalindrome(string &str, int start, int end) {
+	while (start <= end) {
+		if (str[start] != str[end]) return false;
+		start++;
+		end--;
+	}
+	return true;
+}
+
+int partitioningPalindromeiiWeak(string &str, int start, int end, vector<vector<int> > &dp) {
+	if (start >= end) return 0;
+
+	if (isPalindrome(str, start, end)) return 0;
+
+	if (dp[start][end] != -1) return dp[start][end];
+
+	int minValue = INT_MAX;
+
+	for (int i = start; i < end; i++) {
+
+		int leftCuts = partitioningPalindromeiiWeak(str, start, i, dp);
+		int rightCuts = partitioningPalindromeiiWeak(str, i + 1, end, dp);
+
+		minValue = min(minValue, rightCuts + 1 + leftCuts);
+	}
+
+	dp[start][end] = minValue;
+
+	return minValue;
+}
+
+int partitioningPalindromeii(string &str, int start, int end, vector<vector<int> > &dp) {
+	if (start >= end) return 0;
+
+	if (isPalindrome(str, start, end)) return 0;
+
+	if (dp[start][end] != -1) return dp[start][end];
+
+	int minValue = INT_MAX;
+
+	for (int i = start; i < end; i++) {
+
+		if (isPalindrome(str, start, i)) {
+			int rightCuts = partitioningPalindromeii(str, i + 1, end, dp);
+
+			minValue = min(minValue, rightCuts + 1);
+		}
+	}
+
+	dp[start][end] = minValue;
+
+	return minValue;
+}
+
+int minCut(string s) {
+	if (s.length() == 0 or s.length() == 1) return 0;
+
+	vector<vector<int> > dp(s.length() + 1, vector<int> (s.length() + 1, -1));
+
+	return helper(s, 0, s.length() - 1, dp);
+}
+
 int main() {
 
 	// int n = 5;
